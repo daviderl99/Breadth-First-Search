@@ -7,13 +7,22 @@
   <script src="Container.js" defer></script>
   <script src="script.js" defer></script>
   <script src="BFS_Algorithm.js" defer></script>
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="toggleSwitch.css">
+  <link rel="icon" href="animated_favicon.gif" type="image/gif">
   <title>Breadth-First Search</title>
 </head>
 <body>
   <div id="canvas-div"></div>
-  <button onclick="clearGrid()">Clear</button>
-  <button onclick="setStartPoint()">Set Start</button>
-  <button onclick="setEndPoint()">Set End</button>
+  <button onclick="clearSearch(); clearWalls()" id="clearAll">Clear All</button>
+  <button onclick="clearSearch()" id="clearSearch">Clear Search</button>
+  <button onclick="toggleSetStart()">Set Start</button>
+  <button onclick="toggleSetEnd()">Set End</button>
   <button onclick="startSearch()" id="startSearch">Start Search</button>
+  <label for="removeWalls" class="removeWallsLabel">Remove Walls: </label>
+  <label class="switch">
+    <input type="checkbox" id="removeWalls" name="removeWalls">
+    <span class="slider round"></span>
+  </label>
 </body>
 </html>

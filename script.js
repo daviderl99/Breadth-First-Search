@@ -1,10 +1,11 @@
-let cols = 20;
-let rows = 16;
-let scale = 50;
-let containers = [];
+let cols = 60;
+let rows = 40;
+let scale = 20;
 
+let containers = [];
 let settingStart = false;
 let settingEnd = false;
+let searching = false;
 let startN, endN;
 
 document.getElementById("startSearch").disabled = true
@@ -41,10 +42,14 @@ function createGrid(){
 function mouseClicked(){
   for (let c of containers) {
     if (clickingRect(mouseX, mouseY, c.x, c.y) == 0){
-      val = checkForStartEnd(c); // if start/end, don't set wall there
-      console.log(val);
-      if (val) return;
-      c.wall = true;
+      if (document.getElementById("removeWalls").checked) {
+        deleteWall(c);
+        return;
+      }
+      setStartOrEnd(c);
+      if (!(c.start || c.end)){ // if start/end, don't set wall there
+        c.wall = true;
+      }
     }
   }
 }
@@ -52,9 +57,14 @@ function mouseClicked(){
 function mouseDragged(){
   for (let c of containers) {
     if (clickingRect(mouseX, mouseY, c.x, c.y) == 0){
-      val = checkForStartEnd(c);
-      if (val) return;
-      c.wall = true;
+      if (document.getElementById("removeWalls").checked) {
+        deleteWall(c);
+        return;
+      }
+      setStartOrEnd(c);
+      if (!(c.start || c.end)){
+        c.wall = true;
+      }
     }
   }
 }
@@ -65,57 +75,75 @@ function clickingRect(mx, my, x, y){
   return (dx * dx + dy * dy);
 }
 
-function clearGrid(){
+function clearSearch(){
   containers.forEach(c => {
-    c.wall = false;
     c.visited = false;
-    c.checking = false;
+    c.path = false;
     queue = [];
     visited = [];
   });
 }
 
-function setStartPoint(){
+function clearWalls(){
+  containers.forEach(c => {
+    c.wall = false;
+  });
+}
+
+function deleteWall(c){
+  c.wall = false;
+}
+
+function toggleSetStart(){
   settingStart = true;
 }
 
-function setEndPoint(){
+function toggleSetEnd(){
   settingEnd = true;
 }
 
 function clearStartPoint(){
+  if (startN) { // don't loop, if start node defined
+    startN.start = false; 
+    return;
+  }
   containers.forEach(c => {
     c.start = false;
   });
 }
 
 function clearEndPoint(){
+  if (endN) {
+    endN.start = false; 
+    return;
+  }
   containers.forEach(c => {
     c.end = false;
   });
 }
 
-function checkForStartEnd(c){
-  if (settingStart) {
+function setStartOrEnd(c){
+  if (settingStart && c.end == false) {
     clearStartPoint(); // get rid of previous start
-    c.start = true; startN = c;
     c.wall = false;
+    c.start = true; startN = c;
     settingStart = false;
-    return true;
-  } else if (settingEnd) {
-    clearEndPoint(); // get rid of previous end
+
+  } else if (settingEnd && c.start == false) {
+    clearEndPoint();
+    c.wall = false;
     c.end = true; endN = c;
     settingEnd = false;
-    return true;
-  } else if (c.start == true || c.end == true){
-    return true;
   }
-  return false;
 }
 
 function checkIfReady(){
   // if start and end points set, enable button
-  if (startN && endN) {
+  if (startN && endN && !searching) {
     document.getElementById("startSearch").disabled = false
   }
+}
+
+function checkIfRunning(){
+
 }

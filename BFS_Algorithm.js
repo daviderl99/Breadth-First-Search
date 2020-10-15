@@ -1,5 +1,6 @@
 let queue = [];
 let visited = [];
+let prev = new Array(cols*rows);
 
 const bfs = async () => {
   queue.push(startN);
@@ -8,21 +9,19 @@ const bfs = async () => {
     current = queue.shift();
     let neighbours = getNeighbours(current);
     for (n of neighbours){ 
-      n.checking = true; // CHECKING MULTIPLE TIMES IDK WHY
       if (n.end == true){ // if end is found
-        console.log(n._id);
+        prev[n._id] = current._id;
         return n._id;
       }
       if (!visited.includes(n)){
         queue.push(n);
         visited.push(n);
-        n.checking = false;
         n.visited = true;
+        prev[n._id] = current._id;
       }
     }
     await sleep(10);
   }
-  clearTimeout(sleep);
   return -1;
 }
 
@@ -68,12 +67,54 @@ function checkNeighbour(n, c){
 }
 
 function startSearch(){
-  document.getElementById("startSearch").disabled = true
-  path = bfs();
-  if (path == -1) console.log("Path not found");
-  console.log("Found: ", path);
+  searching = true;
+  disableButtons();
+  clearSearch();
+
+  result = bfs();
+  result.then((res) => {
+    searching = false;
+    enableButtons();
+    if (res == -1) alert("Path not found.");
+    else {
+      let path = backtrack(prev);
+      if (path.length > 0){
+        drawPath(path);
+      }
+    }
+  });
 }
 
 const sleep = (milliseconds) => {
   return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
+
+function backtrack(prev){
+  let path = [];
+  for (let i = endN._id; i != null; i = prev[i]){
+    path.push(i);
+  }
+  path = path.reverse();
+
+  if (path[0] == startN._id) return path;
+  return [];
+}
+
+function drawPath(p){
+  for (let i = 1; i < p.length-1; i++){ // ignore start and end node
+    id = p[i];
+    containers[id].path = true;
+  }
+}
+
+function disableButtons(){
+  document.getElementById("startSearch").disabled = true;
+  document.getElementById("clearSearch").disabled = true;
+  document.getElementById("clearAll").disabled = true;
+}
+
+function enableButtons(){
+  document.getElementById("startSearch").disabled = false;
+  document.getElementById("clearSearch").disabled = false;
+  document.getElementById("clearAll").disabled = false;
 }
