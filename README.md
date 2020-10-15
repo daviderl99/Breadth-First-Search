@@ -1,2 +1,2 @@
 # Breadth-First-Search
-Breadth-First Search Algorithm with P5.js
+Breadth-First Search Algorithm using [P5.js library](https://p5js.org/)
