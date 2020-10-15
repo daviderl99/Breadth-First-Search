@@ -143,7 +143,3 @@ function checkIfReady(){
     document.getElementById("startSearch").disabled = false
   }
 }
-
-function checkIfRunning(){
-
-}
