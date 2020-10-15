@@ -114,7 +114,7 @@ function clearStartPoint(){
 
 function clearEndPoint(){
   if (endN) {
-    endN.start = false; 
+    endN.end = false; 
     return;
   }
   containers.forEach(c => {
